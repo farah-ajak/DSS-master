@@ -1,0 +1,7 @@
+FROM docker.io/library/python:3.12-alpine
+
+WORKDIR /app
+
+COPY sensor_simulation_cos.py .
+
+CMD ["python", "-u", "sensor_simulation_cos.py"]
