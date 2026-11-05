@@ -1,0 +1,13 @@
+
+FROM docker.io/library/python:3.12-alpine
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir "Flask>=3.1,<4"
+
+COPY sensor_simulation_cos.py .
+
+EXPOSE 5000
+
+CMD ["python", "-u", "sensor_simulation_cos.py"]
+

@@ -1,0 +1,17 @@
+# Python Basis-Image
+FROM docker.io/library/python:3.12-alpine
+
+# Arbeitsverzeichnis im Container
+WORKDIR /app
+
+# Flask installieren
+RUN pip install --no-cache-dir "Flask>=3.1,<4"
+
+# REST Server Script in den Container kopieren
+COPY server.py .
+
+# Port fuer REST API dokumentieren
+EXPOSE 5000
+
+# REST Server starten
+CMD ["python", "-u", "server.py"]
