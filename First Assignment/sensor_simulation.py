@@ -72,12 +72,13 @@ with open("sensor_data_sin.csv", "w", newline="", encoding="utf-8") as file:
             )
 
             response.raise_for_status()
+            # kann in der Server sein (Server soll dafür sprechen)
             print("Measurement sent to REST server")
 
         except requests.exceptions.RequestException as error:
             print(f"POST failed: {error}")
 
-        # 7. HTTP GET: Messung von Maschine-02 abrufen
+        # 7. HTTP GET: Messung von Maschine-02 abrufen; Brauchen nicht (machine 1 und 2 sollen/ brauchen nicht miteinander zu kommunizieren, nur die Messungen an den Server schicken und der Server speichert die Messungen ab)
         try:
             response = requests.get(
                 f"{REST_URL}/measurements/latest",
