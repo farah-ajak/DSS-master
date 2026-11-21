@@ -1,3 +1,5 @@
+# Sensor Data CSV File
+# First row contains the column headers: timestamp, sample, machine, temperature; rows following that containthe data
 timestamp,sample,machine,temperature
 2026-11-15T15:37:26+00:00,0,Maschine-02,25.00
 2026-11-15T15:37:27+00:00,1,Maschine-02,24.76

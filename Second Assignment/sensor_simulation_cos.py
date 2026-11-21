@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 
 # Simulationsparameter
 MACHINE_NAME = "Maschine-02"
-OTHER_MACHINE = "Maschine-01"
 
 AVERAGE_TEMP = 20
 AMPLITUDE = 5
@@ -47,12 +46,6 @@ with open("sensor_data_cos.csv", "w", newline="", encoding="utf-8") as file:
             "temperature": round(temperature, 2)
         }
 
-        # 4. Messung im Terminal ausgeben
-        print(
-            f"{timestamp} | {MACHINE_NAME} | {temperature:.2f} °C",
-            flush=True
-        )
-
         # 5. Messung in CSV Datei speichern
         writer.writerow([
             timestamp,
@@ -70,34 +63,8 @@ with open("sensor_data_cos.csv", "w", newline="", encoding="utf-8") as file:
                 timeout=3
             )
 
-            response.raise_for_status()
-            print("Measurement sent to REST server")
-
         except requests.exceptions.RequestException as error:
             print(f"POST failed: {error}")
-
-        # 7. HTTP GET: Messung von Maschine-01 abrufen
-        try:
-            response = requests.get(
-                f"{REST_URL}/measurements/latest",
-                params={"machine": OTHER_MACHINE},
-                timeout=3
-            )
-
-            if response.status_code == 200:
-                other = response.json()
-                print(
-                    f"Other machine: {other['temperature']} °C"
-                )
-
-            elif response.status_code == 404:
-                print("Other machine has no measurements yet")
-
-            else:
-                response.raise_for_status()
-
-        except requests.exceptions.RequestException as error:
-            print(f"GET failed: {error}")
 
         # 8. Zaehler erhoehen und eine Sekunde warten
         sample += 1

@@ -1,16 +1,16 @@
+# Libraries 
+import math                                                     # Mathematik-Funktionen
+import time                                                     # Zeit-Funktionen
+import csv                                                      # CSV-Funktionen; Read/ Write CSV Datein (Common-Separated-Values; Zum Speichern der Daten in Reiehn und Spalten; Erste Reihe besteht aus 'Headers', die mit Kommata getrennt sind; Weitere Reihen bestehen aus Daten , die zum zegehörigen Header eingeordnet sind)
+import os                                                       # OS-Funktionen; Zugriff auf Umgebungsvariablen
+import requests                                                 # HTTP-Funktionen; HTTP-Requests an REST-Server senden und empfangen
+from datetime import datetime, timezone                         # Zeitstempel-Funktionen; Zeitstempel im ISO-Format generieren
 
-# Libraries
-import math
-import time
-import csv
-import os
-import requests
-from datetime import datetime, timezone
+# Hier handelt es sich um die Namen der Maschinen, die die Messungen generieren. Diese Namen werden in den Messungen gespeichert und können später zur Identifikation der Maschine verwendet werden.
 
-# Simulationsparameter
 MACHINE_NAME = "Maschine-01"
-OTHER_MACHINE = "Maschine-02"
 
+# Sinusfunktion Parameter zum Generieren der Temperaturwerte
 AVERAGE_TEMP = 20
 AMPLITUDE = 5
 PERIOD = 20
@@ -21,15 +21,17 @@ REST_URL = os.getenv(
     "http://dss-rest:5000"
 )
 
-# Zaehler fuer generierte Messungen
+# Zähler für generierte Messungen
 sample = 0
 
-# CSV Datei erstellen und oeffnen
+# CSV Datei in einem Format erstellen und öffnen
 with open("sensor_data_sin.csv", "w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
+    # Header in die CSV Datei schreiben (CSV-Daten Format)
     writer.writerow(["timestamp", "sample", "machine", "temperature"])
 
     # Simulationsschleife
+    # Ziele: Erstellt die Simulationsdaten , speichert sie in einer CSV-Datei, sendet sie an den REST-Server, wartet eine Sekunde.
     while True:
 
         # 1. Zeitstempel generieren
@@ -40,19 +42,13 @@ with open("sensor_data_sin.csv", "w", newline="", encoding="utf-8") as file:
             2 * math.pi * sample / PERIOD
         )
 
-        # 3. Messdaten fuer REST API vorbereiten
+        # 3. Messdaten für REST API vorbereiten
         measurement = {
             "timestamp": timestamp,
             "sample": sample,
             "machine": MACHINE_NAME,
             "temperature": round(temperature, 2)
         }
-
-        # 4. Messung im Terminal ausgeben
-        print(
-            f"{timestamp} | {MACHINE_NAME} | {temperature:.2f} °C",
-            flush=True
-        )
 
         # 5. Messung in CSV Datei speichern
         writer.writerow([
@@ -72,35 +68,10 @@ with open("sensor_data_sin.csv", "w", newline="", encoding="utf-8") as file:
             )
 
             response.raise_for_status()
-            # kann in der Server sein (Server soll dafür sprechen)
-            print("Measurement sent to REST server")
 
         except requests.exceptions.RequestException as error:
             print(f"POST failed: {error}")
 
-        # 7. HTTP GET: Messung von Maschine-02 abrufen; Brauchen nicht (machine 1 und 2 sollen/ brauchen nicht miteinander zu kommunizieren, nur die Messungen an den Server schicken und der Server speichert die Messungen ab)
-        try:
-            response = requests.get(
-                f"{REST_URL}/measurements/latest",
-                params={"machine": OTHER_MACHINE},
-                timeout=3
-            )
-
-            if response.status_code == 200:
-                other = response.json()
-                print(
-                    f"Other machine: {other['temperature']} °C"
-                )
-
-            elif response.status_code == 404:
-                print("Other machine has no measurements yet")
-
-            else:
-                response.raise_for_status()
-
-        except requests.exceptions.RequestException as error:
-            print(f"GET failed: {error}")
-
-        # 8. Zaehler erhoehen und eine Sekunde warten
+        # 8. Zähler erhöhen und eine Sekunde warten
         sample += 1
         time.sleep(1)

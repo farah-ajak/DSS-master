@@ -1,0 +1,3 @@
+The first assignment is to create a single container file, feeding it synthetic data.
+
+In this assignment, a simple sin wave was chosen to simulate real-life data for testing purposes. The sin wave will be generated using a mathematical function and will serve as the input data for the container file.

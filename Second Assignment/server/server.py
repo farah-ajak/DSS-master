@@ -7,12 +7,17 @@ app = Flask(__name__)
 # Letzte Messung pro Maschine, z. B. {"Maschine-01": {...}, "Maschine-02": {...}}
 latest = {}
 
-
 # 1. POST: Sensor sendet eine neue Messung
 @app.post("/measurements")
 def add_measurement():
     data = request.get_json()
+
+    if not data or "machine" not in data or "timestamp" not in data or "temperature" not in data:
+        print("POST failed: invalid measurement received")
+        return jsonify({"error": "Invalid measurement"}), 400
+    
     latest[data["machine"]] = data
+    print(f"POST successful: measurement received for machine {data['machine']}: {data[timestamp]} | {data[temperature]} °C")
     return jsonify(data), 201
 
 
